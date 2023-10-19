@@ -35,6 +35,15 @@
   with_items: "{{ mysql_config_include_files }}"
   notify: restart mysql
 
+- name: Create log directory
+  file:
+    path: /var/log/mysql
+    state: directory
+    recurse: yes
+    owner: mysql
+    group: "{{ mysql_log_file_group }}"
+    mode: 0760
+
 - name: Create slow query log file (if configured).
   command: "touch {{ mysql_slow_query_log_file }}"
   args:
