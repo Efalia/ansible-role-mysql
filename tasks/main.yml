@@ -4,7 +4,7 @@
 
 # Setup/install tasks.
 - name: Check if MySQL is already installed.
-  stat: path=/etc/init.d/mysql
+  stat: path="{{ mysql_config_file }}"
   register: mysql_installed
 
 - name: Update apt cache if MySQL is not yet installed.
