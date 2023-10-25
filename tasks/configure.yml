@@ -35,11 +35,19 @@
   with_items: "{{ mysql_config_include_files }}"
   notify: restart mysql
 
+- name: Create log directory
+  file:
+    path: /var/log/mysql
+    state: directory
+    recurse: yes
+    owner: mysql
+    group: "{{ mysql_log_file_group }}"
+    mode: 0760
+
 - name: Create slow query log file (if configured).
   command: "touch {{ mysql_slow_query_log_file }}"
   args:
     creates: "{{ mysql_slow_query_log_file }}"
-    warn: false
   when: mysql_slow_query_log_enabled
 
 - name: Create datadir if it does not exist
@@ -64,7 +72,6 @@
   command: "touch {{ mysql_log_error }}"
   args:
     creates: "{{ mysql_log_error }}"
-    warn: false
   when:
     - mysql_log | default(true)
     - mysql_log_error | default(false)
@@ -83,5 +90,5 @@
   tags: ['skip_ansible_galaxy']
 
 - name: Ensure MySQL is started and enabled on boot.
-  service: "name={{ mysql_daemon }} state=started enabled={{ mysql_enabled_on_startup }}"
+  service: "name={{ mysql_daemon }} state=started enabled={{ mysql_enabled_on_startup }} use={{ gestionnaire_service }}"
   register: mysql_service_configuration
