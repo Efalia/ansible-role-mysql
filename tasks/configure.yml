@@ -15,6 +15,25 @@
     force: "{{ overwrite_global_mycnf }}"
   notify: restart mysql
 
+- name: Copy logrotate configuration.
+  template:
+    src: logrotate.cnf.j2
+    dest: /etc/logrotate.d/mariadb
+    owner: root
+    group: root
+    mode: 0644
+    force: true
+
+- name: Copy debian.cnf global MySQL configuration.
+  template:
+    src: debian.cnf.j2
+    dest: "/etc/mysql/debian.cnf"
+    owner: root
+    group: root
+    mode: 0600
+    force: true
+  notify: restart mysql
+
 - name: Verify mysql include directory exists.
   file:
     path: "{{ mysql_config_include_dir }}"
